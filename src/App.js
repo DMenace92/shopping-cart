@@ -1,28 +1,89 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {Container} from 'reactstrap'
+import Header from './components/Header'
+import CartItemsList from './components/cartitemsList'
+import AddItem from './components/AddItem'
+import Footer from './components/Footer'
 
 class App extends Component {
-  render() {
+  state = {
+    cartItems: [],
+    total: 0,
+    form: {
+      quantity: "1",
+      selectedProductId: "40"
+    }
+  }
+  updateQuantity = newQuantity => {
+    this.setState(prevState => {
+      return {
+        form: {
+          ...prevState.form,
+          quantity: newQuantity,
+        }
+      }
+    })
+  }
+  updateSelectedProductId = newId => {
+    this.setState(prevState => {
+      return {
+        form: {
+          ...prevState.form,
+          selectedProductId: newId
+        }
+      }
+    })
+  }
+  addItemToCart = (name, priceInCents) => {
+    this.setState(prevState => {
+      return {
+        cartItems: [...prevState.cartItems, {
+          id: this.state.form.selectedProductId,
+          name,
+          priceInCents,
+          quantity: this.state.form.quantity
+        }]
+      }
+    })
+  }
+  render = () => {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Container>
+        <Header />
+        <CartItemsList 
+          cartItems={this.state.cartItems}
+          quantity={this.state.form.quantity}
+        />
+        <p>Total Price In Cents: {this.state.cartItems.reduce((accumulator, item) => {
+          return accumulator + item.priceInCents 
+        }, 0)}</p>
+        <AddItem 
+          form={this.state.form}
+          updateQuantity={this.updateQuantity}
+          updateSelectedProductId={this.updateSelectedProductId}
+          addItemToCart={this.addItemToCart}
+        />
+        <Footer year="2018" />
+      </Container>
     );
   }
 }
 
 export default App;
+
+
+
+
+// class App extends Component {
+//   state = {
+//    cartItems:[],
+//    total: 0,
+//    form: {
+//      quantity:'1',
+//      selectedProductId:"40"
+//    }
+//   }
+
+// }
+
+// export default App;
